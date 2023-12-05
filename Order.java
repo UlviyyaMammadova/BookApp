@@ -1,12 +1,18 @@
+// Orders.java
 import java.util.Date;
-import java.util.List;
 
 public class Order {
     private int orderId;
-    private Date orderDate;
-    private int bookId;
     private int customerId;
-    private List<Book> books;
+    private int bookId;
+    private Date orderDate;
+
+    public Order(int orderId, int customerId, int bookId, Date orderDate) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.bookId = bookId;
+        this.orderDate = orderDate;
+    }
 
     public int getOrderId() {
         return orderId;
@@ -14,22 +20,6 @@ public class Order {
 
     public void setOrderId(int orderId) {
         this.orderId = orderId;
-    }
-
-    public Date getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Date orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
     }
 
     public int getCustomerId() {
@@ -40,11 +30,19 @@ public class Order {
         this.customerId = customerId;
     }
 
-    public List<Book> getBooks() {
-        return books;
+    public int getBookId() {
+        return bookId;
     }
 
-    public void setBooks(List<Book> books) {
-        this.books = books;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
     }
 }

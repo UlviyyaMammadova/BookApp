@@ -1,3 +1,4 @@
+// Book.java
 public class Book {
     private int bookId;
     private String title;
@@ -41,14 +42,5 @@ public class Book {
 
     public void setAuthorId(int authorId) {
         this.authorId = authorId;
-    }
-    @Override
-    public String toString() {
-        return "Book{" +
-                "bookId=" + bookId +
-                ", title='" + title + '\'' +
-                ", stockQuantity=" + stockQuantity +
-                ", authorId=" + authorId +
-                '}';
     }
 }

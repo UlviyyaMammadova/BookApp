@@ -1,10 +1,9 @@
 // Author.java
 public class Author {
-    private int authorId;
+    private int authorId; // No need to set this in the constructor
     private String authorName;
 
-    public Author(int authorId, String authorName) {
-        this.authorId = authorId;
+    public Author(String authorName) {
         this.authorName = authorName;
     }
 

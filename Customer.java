@@ -1,13 +1,10 @@
 // Customer.java
 public class Customer {
-    private int customerId;
+    private int customerId; // No need to set this in the constructor
     private String customerName;
 
-
-    public Customer(int customerId, String customerName) {
-        this.customerId = customerId;
+    public Customer(String customerName) {
         this.customerName = customerName;
-
     }
 
     public int getCustomerId() {
@@ -25,6 +22,4 @@ public class Customer {
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
-
-
 }

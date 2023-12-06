@@ -1,10 +1,8 @@
-// DatabaseConnector.java
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnector {
-    // Modify the URL, USER, and PASSWORD based on your PostgreSQL setup
     private static final String URL = "jdbc:postgresql://localhost:5432/Books";
     private static final String USER = "postgres";
     private static final String PASSWORD = "12345";

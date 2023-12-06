@@ -1,4 +1,3 @@
-// Customer.java
 public class Customer {
     private int customerId; // No need to set this in the constructor
     private String customerName;

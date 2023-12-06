@@ -1,6 +1,5 @@
-// Author.java
 public class Author {
-    private int authorId; // No need to set this in the constructor
+    private int authorId;
     private String authorName;
 
     public Author(String authorName) {

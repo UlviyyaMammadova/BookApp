@@ -1,4 +1,3 @@
-// BookstoreDAO.java
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,36 +36,23 @@ public class BookstoreDAO {
     }
 
 
-    // CRUD operations for Customer
-    public void addCustomer(Customer customer) {
-        try {
-            String insertQuery = "INSERT INTO Customers (customer_name) VALUES (?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
-                preparedStatement.setString(1, customer.getCustomerName());
-                preparedStatement.executeUpdate();
-
-                // Retrieve the generated auto-incremented key (customer_id)
-                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int generatedId = generatedKeys.getInt(1);
-                    customer.setCustomerId(generatedId);
-                } else {
-                    throw new SQLException("Failed to retrieve generated customer_id");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     // CRUD operations for Book
-    public void addBook(Book book) {
+    public void addBook(Book book, Author author) {
         try {
-            String insertQuery = "INSERT INTO Books (title, author_id, stock_quantity) VALUES (?, ?, ?)";
+            // Check if the author exists, if not, add the author
+            if (author.getAuthorId() == 0) {
+                addAuthor(author);
+            }
+
+            // Now, add the book
+            String insertQuery = "INSERT INTO Books (title, stock_quantity, author_id) VALUES (?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, book.getTitle());
-                preparedStatement.setInt(2, book.getAuthorId());
-                preparedStatement.setInt(3, book.getStockQuantity());
+                preparedStatement.setInt(2, book.getStockQuantity());
+
+                // Use the author ID from the Author object
+                preparedStatement.setInt(3, author.getAuthorId());
+
                 preparedStatement.executeUpdate();
 
                 // Retrieve the generated auto-incremented key (book_id)
@@ -97,7 +83,13 @@ public class BookstoreDAO {
                     int stockQuantity = resultSet.getInt("stock_quantity");
                     int authorId = resultSet.getInt("author_id");
 
-                    Book book = new Book(bookId, title, stockQuantity, authorId);
+
+                    Book book = new Book();
+                    book.setBookId(bookId);
+                    book.setTitle(title);
+                    book.setStockQuantity(stockQuantity);
+                    book.setAuthorId(authorId);
+
                     books.add(book);
                 }
             }
@@ -107,12 +99,12 @@ public class BookstoreDAO {
         return books;
     }
 
-    public void updateBookDetails(int bookId, String newTitle) {
+    public void updateBookDetails(String oldTitle, String newTitle) {
         try {
-            String updateQuery = "UPDATE Books SET title = ? WHERE book_id = ?";
+            String updateQuery = "UPDATE Books SET title = ? WHERE title = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
                 preparedStatement.setString(1, newTitle);
-                preparedStatement.setInt(2, bookId);
+                preparedStatement.setString(2, oldTitle);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -120,11 +112,80 @@ public class BookstoreDAO {
         }
     }
 
-    public void removeBook(int bookId) {
+    public void removeBook(String title) {
         try {
-            String deleteQuery = "DELETE FROM Books WHERE book_id = ?";
+            String deleteQuery = "DELETE FROM Books WHERE title = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
-                preparedStatement.setInt(1, bookId);
+                preparedStatement.setString(1, title);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    // CRUD operations for Customers
+    public void addCustomer(Customer customer) {
+        try {
+            String insertQuery = "INSERT INTO Customers (customer_name) VALUES (?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, customer.getCustomerName());
+                preparedStatement.executeUpdate();
+
+                // Retrieve the generated auto-incremented key (customer_id)
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int generatedId = generatedKeys.getInt(1);
+                    customer.setCustomerId(generatedId);
+                } else {
+                    throw new SQLException("Failed to retrieve generated customer_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Customer> getAllCustomers() {
+        List<Customer> customers = new ArrayList<>();
+        try {
+            String selectQuery = "SELECT * FROM Customers";
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(selectQuery)) {
+                while (resultSet.next()) {
+                    int customerId = resultSet.getInt("customer_id");
+                    String customerName = resultSet.getString("customer_name");
+
+                    Customer customer = new Customer(customerName);
+                    customer.setCustomerId(customerId);
+                    customers.add(customer);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
+
+    public void updateCustomerDetails(int customerId, String newCustomerName) {
+        try {
+            String updateQuery = "UPDATE Customers SET customer_name = ? WHERE customer_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                preparedStatement.setString(1, newCustomerName);
+                preparedStatement.setInt(2, customerId);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeCustomer(int customerId) {
+        try {
+            String deleteQuery = "DELETE FROM Customers WHERE customer_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+                preparedStatement.setInt(1, customerId);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -133,12 +194,10 @@ public class BookstoreDAO {
     }
 
     // CRUD operations for Orders
-    // BookstoreDAO.java
     public void addOrder(Order order) {
         try {
             connection.setAutoCommit(false);
 
-            // Check if there is enough stock for the book
             String checkStockQuery = "SELECT stock_quantity FROM Books WHERE book_id = ?";
             try (PreparedStatement stockStatement = connection.prepareStatement(checkStockQuery)) {
                 stockStatement.setInt(1, order.getBookId());
@@ -151,7 +210,7 @@ public class BookstoreDAO {
                 }
             }
 
-            // Insert the order
+            // Add the order
             String insertOrderQuery = "INSERT INTO Orders (customer_id, book_id, order_date) VALUES (?, ?, CURRENT_DATE)";
             try (PreparedStatement orderStatement = connection.prepareStatement(insertOrderQuery, Statement.RETURN_GENERATED_KEYS)) {
                 orderStatement.setInt(1, order.getCustomerId());
@@ -190,6 +249,31 @@ public class BookstoreDAO {
                 e.printStackTrace();
             }
         }
+    }
+
+    public List<Order> getAllOrders() {
+        List<Order> orders = new ArrayList<>();
+        try {
+            String selectQuery = "SELECT * FROM Orders";
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(selectQuery)) {
+                while (resultSet.next()) {
+                    int orderId = resultSet.getInt("order_id");
+                    int customerId = resultSet.getInt("customer_id");
+                    int bookId = resultSet.getInt("book_id");
+                    Date orderDate = resultSet.getDate("order_date");
+
+                    
+                    Order order = new Order(customerId, bookId);
+                    order.setOrderId(orderId);
+                    order.setOrderDate(orderDate);
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
     }
 
 

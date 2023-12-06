@@ -1,15 +1,17 @@
-// Book.java
 public class Book {
     private int bookId;
     private String title;
     private int stockQuantity;
     private int authorId;
 
-    public Book(int bookId, String title, int stockQuantity, int authorId) {
-        this.bookId = bookId;
+    public Book(String title, int stockQuantity, int authorId) {
         this.title = title;
         this.stockQuantity = stockQuantity;
         this.authorId = authorId;
+    }
+
+    // No-argument constructor for cases where bookId is generated automatically
+    public Book() {
     }
 
     public int getBookId() {
@@ -42,5 +44,14 @@ public class Book {
 
     public void setAuthorId(int authorId) {
         this.authorId = authorId;
+    }
+    @Override
+    public String toString() {
+        return "Book{" +
+                "bookId=" + bookId +
+                ", title='" + title + '\'' +
+                ", stockQuantity=" + stockQuantity +
+                ", authorId=" + authorId +
+                '}';
     }
 }

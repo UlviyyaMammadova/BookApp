@@ -55,11 +55,11 @@ The `Order` class represents an order with the following attributes:
    ```sql
    -- SQL queries for creating tables (Books, Authors, Customers, Orders)
 
-Java Environment: Ensure you have Java installed on your machine.
+2. **Java Environment**: Ensure you have Java installed on your machine.
 
-Compile and Run: Compile and run the Java application using your preferred IDE or command line.
+3. **Compile and Run**: Compile and run the Java application using your preferred IDE or command line.
 
-Usage
-Run the Main class.
-Follow the on-screen instructions to interact with the application.
+4. **Usage**: Run the Main class.
+   Follow the on-screen instructions to interact with the application.
+
 Perform actions such as adding books, updating orders, and viewing customer information.

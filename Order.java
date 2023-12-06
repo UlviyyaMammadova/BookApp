@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class Order {
     private int orderId;
@@ -43,4 +44,14 @@ public class Order {
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
+
+    @Override
+    public String toString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return "Order ID: " + orderId +
+                ", Customer ID: " + customerId +
+                ", Book ID: " + bookId +
+                ", Order Date: " + (orderDate != null ? dateFormat.format(orderDate) : "Not available");
+    }
+
 }
